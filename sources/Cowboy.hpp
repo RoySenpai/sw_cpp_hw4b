@@ -35,7 +35,40 @@ namespace ariel
 			* @param name The name of the cowboy.
 			* @param location The starting location of the cowboy.
 			*/
-			Cowboy(std::string name, Point location);
+			Cowboy(std::string name, const Point &location);
+
+			/*
+			 * @brief Construct a new Cowboy object.
+			 * @param other The other cowboy.
+			 * @note This is a copy constructor.
+			*/
+			Cowboy(const Cowboy& other);
+
+			/*
+			 * @brief Construct a new Cowboy object.
+			 * @param other The other cowboy.
+			 * @note This is a move constructor.
+			*/
+			Cowboy(Cowboy&& other) noexcept;
+
+			/*
+			 * @brief Assigns the cowboy to another cowboy.
+			 * @param other The other cowboy.
+			 * @return Cowboy& The cowboy after the assignment.
+			*/
+			Cowboy& operator=(const Cowboy& other);
+
+			/*
+			 * @brief Assigns the cowboy to another cowboy.
+			 * @param other The other cowboy.
+			 * @return Cowboy& The cowboy after the assignment.
+			*/
+			Cowboy& operator=(Cowboy&& other) noexcept;
+
+			/*
+			 * @brief Destroy the Cowboy object.
+			*/
+			~Cowboy() override;
 
 			/*
 			* @brief Shoots another character.

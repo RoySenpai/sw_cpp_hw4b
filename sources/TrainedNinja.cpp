@@ -20,4 +20,4 @@
 using namespace std;
 using namespace ariel;
 
-TrainedNinja::TrainedNinja(string name, Point location) : Ninja(name, location, 120, 12) {}
+TrainedNinja::TrainedNinja(string name, const Point &location) : Ninja(name, const_cast<Point&>(location), 120, 12) {}

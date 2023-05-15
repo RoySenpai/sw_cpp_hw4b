@@ -82,6 +82,6 @@ namespace ariel
 			* @param dist The maximum distance between the points.
 			* @return The closest point to the other point, that is at most dist away from the origin point.
 			*/
-			static Point moveTowards(const Point &curr, const Point &other, const double dist);
+			static Point moveTowards(const Point &curr, const Point &other, double dist);
 	};
 }

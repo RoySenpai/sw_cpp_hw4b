@@ -16,50 +16,114 @@
  */
 
 #include <iostream>
+#include <limits>
 #include "Team.hpp"
 
 using namespace std;
 using namespace ariel;
 
-Character *Team::_find_victim(Team *other)
-{
-	return nullptr;
+Character* Team::_find_victim(Team *other) {
+	Character *victim = nullptr;
+	Character *otherLeader = other->_leader;
+
+	double minDistance = numeric_limits<double>::max();
+
+	for (Character* member: other->_members)
+	{
+		if (member == nullptr || member == otherLeader)
+			continue;
+			
+		if (member->isAlive() && otherLeader->distance(member) < minDistance)
+		{
+			minDistance = otherLeader->distance(member);
+			victim = member;
+		}
+	}
+
+	if (victim == nullptr && otherLeader->isAlive())
+		victim = otherLeader;
+		
+	return victim;
 }
 
-Team::Team(Character *leader) : _leader(leader), _size(1)
+Team::Team(Character *leader) : _leader(leader)
 {
 	if (leader->isInTeam())
 		throw runtime_error("Leader is already in a team!");
-
 	
 	_members.push_back(leader);
 
 	leader->setInTeam(true);
 }
 
-Team::~Team()
+Team::Team(const Team& other): _leader(other._leader)
 {
-	Cowboy *c = nullptr;
-	Ninja *n = nullptr;
-
-	while (_members.size() > 0)
+	for (Character* member: other._members)
 	{
-		Character *tmp = _members.back();
-		_members.pop_back();
+		Cowboy* c = dynamic_cast<Cowboy*>(member);
+		Ninja* n = dynamic_cast<Ninja*>(member);
 		
-		c = dynamic_cast<Cowboy *>(tmp);
-		n = dynamic_cast<Ninja *>(tmp);
-
 		if (c != nullptr)
-		{
-			delete c;
-		}
+			_members.push_back(new Cowboy(*c));
 
 		else if (n != nullptr)
+			_members.push_back(new Ninja(*n));
+	}
+}
+
+Team::Team(Team&& other) noexcept: _leader(other._leader), _members(move(other._members))
+{
+    other._leader = nullptr;
+}
+
+Team& Team::operator=(const Team& other)
+{
+	if (this != &other)
+	{
+		for (Character* member: _members)
+			delete member;
+
+		_members.clear();
+		_leader = other._leader;
+
+		for (Character* member: other._members)
 		{
-			delete n;
+			Cowboy* c = dynamic_cast<Cowboy*>(member);
+			Ninja* n = dynamic_cast<Ninja*>(member);
+		
+			if (c != nullptr)
+				_members.push_back(new Cowboy(*c));
+
+			else if (n != nullptr)
+				_members.push_back(new Ninja(*n));
 		}
 	}
+
+	return *this;
+}
+
+Team& Team::operator=(Team&& other) noexcept
+{
+	if (this != &other)
+	{
+		for (Character* member : _members)
+			delete member;
+
+		_members.clear();
+
+		_leader = other._leader;
+		_members = move(other._members);
+
+		other._leader = nullptr;
+	}
+	
+	return *this;
+}
+
+Team::~Team()
+{
+	for (Character *member: _members)
+		delete member;
 }
 
 void Team::add(Character *member)
@@ -70,58 +134,120 @@ void Team::add(Character *member)
 	else if (member->isInTeam())
 		throw runtime_error("Member is already in a team!");
 
-	else if (_size == 10)
+	else if (_members.size() == 10)
 		throw runtime_error("Team is full!");
 
 	_members.push_back(member);
 
 	member->setInTeam(true);
-
-	_size++;
 }
 
 void Team::attack(Team *other)
 {
-	for (unsigned int i = 0; i < other->_size; i++)
-		other->_members[i]->hit(10);
+	if (other == nullptr)
+		throw invalid_argument("Other team is null!");
+
+	else if (other == this)
+		throw runtime_error("Cannot attack self team!");
+
+	else if (other->stillAlive() == 0)
+		throw runtime_error("Other team is dead!");
+
+	if (!other->_leader->isAlive())
+	{
+		Character* tmp = Team::_find_victim(other);
+
+		if (tmp != nullptr)
+			other->_leader = tmp;
+
+		else
+			throw runtime_error("Great, you broke the game!");
+	}
+	
+	Character* victim = Team::_find_victim(other);
+
+	if (victim == nullptr)
+		return;
+
+	for (Character* member: _members)
+	{
+		if (!victim->isAlive())
+			return;
+
+		Cowboy* c = dynamic_cast<Cowboy*>(member);
+
+		if (c != nullptr && c->isAlive())
+		{
+			if (c->hasboolets())
+				c->shoot(victim);
+
+			else
+				c->reload();
+		}
+	}
+
+	for (Character* member: _members)
+	{
+		if (!victim->isAlive())
+			return;
+
+		Ninja* n = dynamic_cast<Ninja*>(member);
+
+		if (n != nullptr && n->isAlive())
+		{
+			if (n->getLocation().distance(victim->getLocation()) <= 1)
+				n->slash(victim);
+
+			else
+				n->move(victim);
+		}
+	}
 }
 
 int Team::stillAlive() const
 {
 	int alive = 0;
 
-	for (unsigned int i = 0; i < _size; i++)
+	for (Character* member: _members)
 	{
-		if (_members[i]->isAlive())
+		if (member->isAlive())
 			alive++;
 	}
 
 	return alive;
 }
 
-Character *Team::getMember(int index) const
+const vector<Character*>& Team::getMembers() const {
+	return _members;
+}
+
+const Character* Team::getLeader() const
 {
-	return nullptr;
+	return _leader;
+}
+
+void Team::setLeader(Character *leader) {
+	_leader = leader;
 }
 
 int Team::getSize() const
 {
-	return _size;
+	return static_cast<int>(_members.size());
 }
 
 void Team::print() const
 {
-	cout << "Team: " << _leader->getName() << endl;
+	cout << "Team Leader: " << _leader->getName() << endl;
 
-	for (unsigned int i = 0; i < _size; i++)
+	for (Character* member: _members)
 	{
-		if (dynamic_cast<Cowboy *>(_members[i]) != nullptr)
-			cout << _members[i]->print() << endl;
+		if (dynamic_cast<Cowboy*>(member) != nullptr)
+			cout << member->print() << endl;
 	}
 
-	for (unsigned int i = 0; i < _size; i++)
+	for (Character* member: _members)
 	{
-		if (dynamic_cast<Ninja *>(_members[i]) != nullptr)
-			cout << _members[i]->print() << endl;
+		if (dynamic_cast<Ninja*>(member) != nullptr)
+			cout << member->print() << endl;
 	}
 }

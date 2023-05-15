@@ -15,12 +15,45 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "Cowboy.hpp"
 
 using namespace std;
 using namespace ariel;
 
-Cowboy::Cowboy(string name, Point location) : Character(name, location, 110) {}
+Cowboy::Cowboy(string name, const Point &location): Character(name, const_cast<Point&>(location), 110), _bullets(6) {}
+
+Cowboy::Cowboy(const Cowboy& other): Character(other), _bullets(other._bullets) {}
+
+Cowboy& Cowboy::operator=(const Cowboy& other)
+{
+	if (this != &other)
+	{
+		Character::operator=(other);
+		_bullets = other._bullets;
+	}
+
+	return *this;
+}
+
+Cowboy::Cowboy(Cowboy&& other) noexcept: Character(move(other)), _bullets(other._bullets)
+{
+	other._bullets = 0;
+}
+
+Cowboy& Cowboy::operator=(Cowboy&& other) noexcept
+{
+	if (this != &other)
+	{
+		Character::operator=(std::move(other));
+		_bullets = other._bullets;
+		other._bullets = 0;
+	}
+
+	return *this;
+}
+
+Cowboy::~Cowboy() {}
 
 void Cowboy::shoot(Character *other)
 {
@@ -28,7 +61,7 @@ void Cowboy::shoot(Character *other)
 		throw invalid_argument("Other character is null!");
 
 	else if (other == this)
-		throw invalid_argument("Cannot shoot yourself!");
+		throw runtime_error("Cannot shoot yourself!");
 
 	else if (!isAlive())
 		throw runtime_error("Cannot shoot while dead!");
@@ -40,9 +73,13 @@ void Cowboy::shoot(Character *other)
 
 	if (hasboolets())
 	{
+		cout << getName() << " shoots " << other->getName() << " with 10 damage." << endl;
 		_bullets--;
 		other->hit(10);
 	}
+
+	else
+		cout << getName() << " is out of ammo." << endl;
 }
 
 bool Cowboy::hasboolets() const
@@ -52,6 +89,10 @@ bool Cowboy::hasboolets() const
 
 void Cowboy::reload()
 {
+	if (!isAlive())
+		throw runtime_error("Cannot reload while dead!");
+	
+	cout << getName() << " reloads." << endl;
 	_bullets = 6;
 }
 

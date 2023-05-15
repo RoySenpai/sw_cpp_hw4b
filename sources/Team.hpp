@@ -39,11 +39,6 @@ namespace ariel
 			std::vector<Character *> _members;
 
 			/*
-			* @brief The size of the team.
-			*/
-			int _size;
-
-			/*
 			* @brief Find a victim to attack.
 			* @param other A pointer to the other team.
 			* @return A pointer to the victim, or nullptr if there is no victim.
@@ -64,29 +59,64 @@ namespace ariel
 			virtual ~Team();
 
 			/*
-			* @brief Add a member to the team.
-			* @param member A pointer to the member to add.
+			 * @brief Copy constructor.
+			 * @param other The other team to copy.
+			*/
+			Team(const Team& other);
+
+			/*
+			 * @brief Move constructor.
+			 * @param other The other team to move.
+			*/
+			Team(Team&& other) noexcept;
+
+			/*
+			 * @brief Copy assignment operator.
+			 * @param other The other team to copy.
+			 * @return A reference to this team.
+			*/
+			Team& operator=(const Team& other);
+
+			/*
+			 * @brief Move assignment operator.
+			 * @param other The other team to move.
+			 * @return A reference to this team.
+			*/
+			Team& operator=(Team&& other) noexcept;
+
+			/*
+			 * @brief Add a member to the team.
+			 * @param member A pointer to the member to add.
 			*/
 			void add(Character *member);
 
 			/*
-			* @brief Attack the other team
-			* @param other A pointer to the other team
-			*/
-			virtual void attack(Team *other);
-
-			/*
-			* @brief Check if the team is still alive
-			* @return int The number of alive members
+			 * @brief Check if the team is still alive
+			 * @return int The number of alive members
 			*/
 			int stillAlive() const;
 
 			/*
-			* @brief Get a member of the team
-			* @param index The index of the member
-			* @return A pointer to the member
+			 * @brief Get the members of the team.
+			 * @return A reference to a vector of pointers to the members of the team.
+			 * @note This function is const because we don't want to change the members of the team.
+			 * @note This function returns a const reference because we don't want to change the vector.
 			*/
-			Character *getMember(int index) const;
+			const std::vector<Character*>& getMembers() const;
+
+			/*
+			 * @brief Get the leader of the team.
+			 * @return A pointer to the leader of the team.
+			 * @note This function is const because we don't want to change the leader of the team.
+			 * @note This function returns a const pointer because we don't want to change the leader.
+			*/
+			const Character* getLeader() const;
+
+			/*
+			 * @brief Set the leader of the team.
+			 * @param leader A pointer to the leader of the team.
+			*/
+			void setLeader(Character *leader);
 
 			/*
 			* @brief Get the size of the team
@@ -95,7 +125,13 @@ namespace ariel
 			int getSize() const;
 
 			/*
-			* @brief Print the team members
+			 * @brief Attack the other team
+			 * @param other A pointer to the other team
+			*/
+			virtual void attack(Team *other);
+
+			/*
+			 * @brief Print the team members
 			*/
 			virtual void print() const;
 	};

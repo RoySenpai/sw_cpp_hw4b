@@ -29,6 +29,6 @@ namespace ariel
 			* @param name The name of the trained ninja.
 			* @param location The starting location of the trained ninja.
 			*/
-			TrainedNinja(std::string name, Point location);
+			TrainedNinja(std::string name, const Point &location);
 	};
 }

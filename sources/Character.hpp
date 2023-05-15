@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include "Point.hpp"
-
 #include <string>
 #include "Point.hpp"
 
@@ -50,12 +48,46 @@ namespace ariel
 
 		public:
 			/*
-			* @brief Construct a new Character object.
-			* @param name The name of the character.
-			* @param location The starting location of the character.
-			* @param health_points The health points of the character.
+			 * @brief Construct a new Character object.
+			 * @param name The name of the character.
+			 * @param location The starting location of the character.
+			 * @param health_points The health points of the character.
 			*/
-			Character(std::string name, Point& location, int health_points);
+			Character(std::string name, const Point &location, int health_points);
+
+			/*
+			 * @brief Construct a new Character object.
+			 * @param other The other character.
+			 * @note This is a copy constructor.
+			*/
+			Character(const Character& other);
+
+			/*
+			 * @brief Construct a new Character object.
+			 * @param other The other character.
+			 * @note This is a move constructor.
+			*/
+			Character(Character&& other) noexcept;
+
+			/*
+			 * @brief Overloads the assignment operator.
+			 * @param other The other character.
+			 * @return The character after the assignment.
+			*/
+			Character& operator=(const Character& other);
+
+			/*
+			 * @brief Overloads the assignment operator.
+			 * @param other The other character.
+			 * @return The character after the assignment.
+			*/
+			Character& operator=(Character&& other) noexcept;
+
+			/*
+			 * @brief Destroy the Character object.
+			 * @note This is a virtual destructor, it doesn't do anything.
+			*/
+			virtual ~Character() {}
 
 			/*
 			* @brief Checks if the character is alive.

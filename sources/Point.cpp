@@ -28,7 +28,7 @@ string Point::print() const
 	return "(" + to_string(_x) + ", " + to_string(_y) + ")";
 }
 
-Point Point::moveTowards(const Point &curr, const Point &other, const double dist)
+Point Point::moveTowards(const Point &curr, const Point &other, double dist)
 {
 	if (dist < 0)
 		throw invalid_argument("Distance cannot be negative!");

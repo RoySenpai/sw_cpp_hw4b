@@ -37,7 +37,7 @@ namespace ariel
 			* @param health_points The health points of the ninja.
 			* @param speed The speed of the ninja.
 			*/
-			Ninja(std::string name, Point location, int health_points, int speed);
+			Ninja(std::string name, const Point &location, int health_points, int speed);
 
 			/*
 			* @brief Moves the ninja to another character _speed steps closer.

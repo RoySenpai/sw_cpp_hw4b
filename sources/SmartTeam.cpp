@@ -24,10 +24,10 @@ SmartTeam::SmartTeam(Character *leader) : Team(leader) {}
 
 void SmartTeam::attack(Team *other)
 {
-	return;
+	Team::attack(other);
 }
 
 void SmartTeam::print() const
 {
-	return;
+	Team::print();
 }

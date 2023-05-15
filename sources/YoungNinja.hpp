@@ -29,6 +29,6 @@ namespace ariel
 			* @param name The name of the young ninja.
 			* @param location The starting location of the young ninja.
 			*/
-			YoungNinja(std::string name, Point location);
+			YoungNinja(std::string name, const Point &location);
 	};
 }

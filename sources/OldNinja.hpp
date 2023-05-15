@@ -29,6 +29,6 @@ namespace ariel
 			* @param name The name of the old ninja.
 			* @param location The starting location of the old ninja.
 			*/
-			OldNinja(std::string name, Point location);
+			OldNinja(std::string name, const Point &location);
 	};
 }

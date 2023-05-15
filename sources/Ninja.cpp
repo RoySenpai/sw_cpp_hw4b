@@ -15,12 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "Ninja.hpp"
 
 using namespace std;
 using namespace ariel;
 
-Ninja::Ninja(string name, Point location, int health_points, int speed) : Character(name, location, health_points), _speed(speed) {}
+Ninja::Ninja(string name, const Point &location, int health_points, int speed) : Character(name, const_cast<Point&>(location), health_points), _speed(speed) {}
 
 void Ninja::move(Character *other)
 {
@@ -34,6 +35,8 @@ void Ninja::move(Character *other)
 		throw runtime_error("Cannot move while dead!");
 
 	_location = Point::moveTowards(_location, other->getLocation(), _speed);
+
+	cout << getName() << " moved towards " << other->getName() << ". Current distance: " << _location.distance(other->getLocation()) << endl;
 }
 
 void Ninja::slash(Character *other)
@@ -42,7 +45,7 @@ void Ninja::slash(Character *other)
 		throw invalid_argument("Other character is null!");
 
 	else if (other == this)
-		throw invalid_argument("Cannot slash yourself!");
+		throw runtime_error("Cannot slash yourself!");
 
 	else if (!isAlive())
 		throw runtime_error("Cannot slash while dead!");
@@ -51,7 +54,13 @@ void Ninja::slash(Character *other)
 		throw runtime_error("Cannot slash a dead character!");
 
 	if (_location.distance(other->getLocation()) <= 1)
+	{
+		cout << getName() << " slashed " << other->getName() << " with 40 damage." << endl;
 		other->hit(40);
+	}
+
+	else
+		cout << getName() << " tried to slash " << other->getName() << " but failed. Distance too far (" << _location.distance(other->getLocation()) << ")." << endl;
 }
 
 string Ninja::print() const
