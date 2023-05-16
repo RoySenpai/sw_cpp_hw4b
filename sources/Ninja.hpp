@@ -23,7 +23,7 @@ namespace ariel
 {
 	class Ninja : public Character
 	{
-		protected:
+		private:
 			/*
 			* @brief The speed of the ninja.
 			*/
@@ -50,7 +50,7 @@ namespace ariel
 			* @brief Slashes another character.
 			* @param other The other character.
 			* @return void
-			* @note If the other character is alive and the distance between the two characters is less than or equal to 1, the other character is hit.
+			* @note If the other character is alive and the distance between the two characters is less than 1, the other character is hit.
 			*/
 			void slash(Character *other);
 

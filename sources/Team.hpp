@@ -27,7 +27,7 @@ namespace ariel
 {
 	class Team
 	{
-		protected:
+		private:
 			/*
 			* @brief A pointer to the leader of the team.
 			*/
@@ -37,13 +37,6 @@ namespace ariel
 			* @brief A vector of pointers to the members of the team.
 			*/
 			std::vector<Character *> _members;
-
-			/*
-			* @brief Find a victim to attack.
-			* @param other A pointer to the other team.
-			* @return A pointer to the victim, or nullptr if there is no victim.
-			*/
-			static Character *_find_victim(Team *other);
 
 		public:
 			/*
@@ -85,6 +78,13 @@ namespace ariel
 			Team& operator=(Team&& other) noexcept;
 
 			/*
+			* @brief Find a victim to attack.
+			* @param other A pointer to the other team.
+			* @return A pointer to the victim, or nullptr if there is no victim.
+			*/
+			Character *_find_victim(Team *other);
+
+			/*
 			 * @brief Add a member to the team.
 			 * @param member A pointer to the member to add.
 			*/
@@ -108,9 +108,8 @@ namespace ariel
 			 * @brief Get the leader of the team.
 			 * @return A pointer to the leader of the team.
 			 * @note This function is const because we don't want to change the leader of the team.
-			 * @note This function returns a const pointer because we don't want to change the leader.
 			*/
-			const Character* getLeader() const;
+			Character* getLeader() const;
 
 			/*
 			 * @brief Set the leader of the team.

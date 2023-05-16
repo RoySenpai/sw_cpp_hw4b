@@ -22,47 +22,23 @@
 using namespace std;
 using namespace ariel;
 
-Character* Team::_find_victim(Team *other) {
-	Character *victim = nullptr;
-	Character *otherLeader = other->_leader;
-
-	double minDistance = numeric_limits<double>::max();
-
-	for (Character* member: other->_members)
-	{
-		if (member == nullptr || member == otherLeader)
-			continue;
-			
-		if (member->isAlive() && otherLeader->distance(member) < minDistance)
-		{
-			minDistance = otherLeader->distance(member);
-			victim = member;
-		}
-	}
-
-	if (victim == nullptr && otherLeader->isAlive())
-		victim = otherLeader;
-		
-	return victim;
-}
-
 Team::Team(Character *leader) : _leader(leader)
 {
 	if (leader->isInTeam())
 		throw runtime_error("Leader is already in a team!");
-	
+
 	_members.push_back(leader);
 
 	leader->setInTeam(true);
 }
 
-Team::Team(const Team& other): _leader(other._leader)
+Team::Team(const Team &other) : _leader(other._leader)
 {
-	for (Character* member: other._members)
+	for (Character *member : other._members)
 	{
-		Cowboy* c = dynamic_cast<Cowboy*>(member);
-		Ninja* n = dynamic_cast<Ninja*>(member);
-		
+		Cowboy *c = dynamic_cast<Cowboy *>(member);
+		Ninja *n = dynamic_cast<Ninja *>(member);
+
 		if (c != nullptr)
 			_members.push_back(new Cowboy(*c));
 
@@ -71,26 +47,26 @@ Team::Team(const Team& other): _leader(other._leader)
 	}
 }
 
-Team::Team(Team&& other) noexcept: _leader(other._leader), _members(move(other._members))
+Team::Team(Team &&other) noexcept : _leader(other._leader), _members(move(other._members))
 {
-    other._leader = nullptr;
+	other._leader = nullptr;
 }
 
-Team& Team::operator=(const Team& other)
+Team &Team::operator=(const Team &other)
 {
 	if (this != &other)
 	{
-		for (Character* member: _members)
+		for (Character *member : _members)
 			delete member;
 
 		_members.clear();
 		_leader = other._leader;
 
-		for (Character* member: other._members)
+		for (Character *member : other._members)
 		{
-			Cowboy* c = dynamic_cast<Cowboy*>(member);
-			Ninja* n = dynamic_cast<Ninja*>(member);
-		
+			Cowboy *c = dynamic_cast<Cowboy *>(member);
+			Ninja *n = dynamic_cast<Ninja *>(member);
+
 			if (c != nullptr)
 				_members.push_back(new Cowboy(*c));
 
@@ -102,11 +78,11 @@ Team& Team::operator=(const Team& other)
 	return *this;
 }
 
-Team& Team::operator=(Team&& other) noexcept
+Team &Team::operator=(Team &&other) noexcept
 {
 	if (this != &other)
 	{
-		for (Character* member : _members)
+		for (Character *member : _members)
 			delete member;
 
 		_members.clear();
@@ -116,14 +92,36 @@ Team& Team::operator=(Team&& other) noexcept
 
 		other._leader = nullptr;
 	}
-	
+
 	return *this;
 }
 
 Team::~Team()
 {
-	for (Character *member: _members)
+	for (Character *member : _members)
 		delete member;
+
+	_members.clear();
+}
+
+Character *Team::_find_victim(Team *other)
+{
+	Character *victim = nullptr;
+
+	double minDistance = numeric_limits<double>::max();
+
+	for (auto member : other->_members)
+	{
+		if (member->isAlive() && _leader->distance(member) < minDistance)
+		{
+			minDistance = _leader->distance(member);
+			victim = member;
+		}
+	}
+
+	cout << "Victim is " << victim->getName() << endl;
+
+	return victim;
 }
 
 void Team::add(Character *member)
@@ -153,28 +151,44 @@ void Team::attack(Team *other)
 	else if (other->stillAlive() == 0)
 		throw runtime_error("Other team is dead!");
 
-	if (!other->_leader->isAlive())
+	else if (stillAlive() == 0)
+		throw runtime_error("Team is dead!");
+
+	if (!_leader->isAlive())
 	{
-		Character* tmp = Team::_find_victim(other);
+		Character *newLeader = nullptr;
 
-		if (tmp != nullptr)
-			other->_leader = tmp;
+		double minDistance = numeric_limits<double>::max();
 
-		else
-			throw runtime_error("Great, you broke the game!");
+		for (auto member : _members)
+		{
+			if (member->isAlive() && member->distance(_leader) < minDistance)
+			{
+				minDistance = member->distance(_leader);
+				newLeader = member;
+			}
+		}
+
+		cout << "Team leader " << _leader->getName() << " has died, new leader is " << newLeader->getName() << endl;
+
+		_leader = newLeader;
 	}
-	
-	Character* victim = Team::_find_victim(other);
 
-	if (victim == nullptr)
-		return;
+	cout << "Team " << _leader->getName() << " is attacking team " << other->_leader->getName() << endl;
 
-	for (Character* member: _members)
+	Character *victim = _find_victim(other);
+
+	for (Character *member : _members)
 	{
 		if (!victim->isAlive())
-			return;
+		{
+			if (other->stillAlive() == 0)
+				break;
 
-		Cowboy* c = dynamic_cast<Cowboy*>(member);
+			victim = _find_victim(other);
+		}
+
+		Cowboy *c = dynamic_cast<Cowboy *>(member);
 
 		if (c != nullptr && c->isAlive())
 		{
@@ -186,16 +200,21 @@ void Team::attack(Team *other)
 		}
 	}
 
-	for (Character* member: _members)
+	for (Character *member : _members)
 	{
 		if (!victim->isAlive())
-			return;
+		{
+			if (other->stillAlive() == 0)
+				break;
 
-		Ninja* n = dynamic_cast<Ninja*>(member);
+			victim = _find_victim(other);
+		}
+
+		Ninja *n = dynamic_cast<Ninja *>(member);
 
 		if (n != nullptr && n->isAlive())
 		{
-			if (n->getLocation().distance(victim->getLocation()) <= 1)
+			if (n->getLocation().distance(victim->getLocation()) < 1)
 				n->slash(victim);
 
 			else
@@ -208,7 +227,7 @@ int Team::stillAlive() const
 {
 	int alive = 0;
 
-	for (Character* member: _members)
+	for (Character *member : _members)
 	{
 		if (member->isAlive())
 			alive++;
@@ -217,16 +236,18 @@ int Team::stillAlive() const
 	return alive;
 }
 
-const vector<Character*>& Team::getMembers() const {
+const vector<Character *> &Team::getMembers() const
+{
 	return _members;
 }
 
-const Character* Team::getLeader() const
+Character *Team::getLeader() const
 {
 	return _leader;
 }
 
-void Team::setLeader(Character *leader) {
+void Team::setLeader(Character *leader)
+{
 	_leader = leader;
 }
 
@@ -239,15 +260,15 @@ void Team::print() const
 {
 	cout << "Team Leader: " << _leader->getName() << endl;
 
-	for (Character* member: _members)
+	for (Character *member : _members)
 	{
-		if (dynamic_cast<Cowboy*>(member) != nullptr)
+		if (dynamic_cast<Cowboy *>(member) != nullptr)
 			cout << member->print() << endl;
 	}
 
-	for (Character* member: _members)
+	for (Character *member : _members)
 	{
-		if (dynamic_cast<Ninja*>(member) != nullptr)
+		if (dynamic_cast<Ninja *>(member) != nullptr)
 			cout << member->print() << endl;
 	}
 }

@@ -24,7 +24,7 @@ namespace ariel
 {
 	class Character
 	{
-		protected:
+		private:
 			/*
 			* @brief The name of the character.
 			*/
@@ -33,7 +33,7 @@ namespace ariel
 			/*
 			* @brief The location of the character.
 			*/
-			Point& _location;
+			Point _location;
 
 			/*
 			 * @brief The health points of the character.
@@ -90,43 +90,43 @@ namespace ariel
 			virtual ~Character() {}
 
 			/*
-			* @brief Checks if the character is alive.
-			* @return True if the character is alive, false otherwise.
-			* @note A character is alive if it has more than 0 health points.
+			 * @brief Checks if the character is alive.
+			 * @return True if the character is alive, false otherwise.
+			 * @note A character is alive if it has more than 0 health points.
 			*/
 			bool isAlive() const;
 
 			/*
-			* @brief Check the distance between this character and other character.
-			* @param other The other character.
-			* @return The distance between this character and other character.
-			* @note The distance is calculated by the distance function of Point.
+			 * @brief Check the distance between this character and other character.
+			 * @param other The other character.
+			 * @return The distance between this character and other character.
+			 * @note The distance is calculated by the distance function of Point.
 			*/
 			double distance(Character *other) const;
 
 			/*
-			* @brief Makes a hit on the character.
-			* @param power The power of the hit.
-			* @return void
+			 * @brief Makes a hit on the character.
+			 * @param power The power of the hit.
+			 * @return void
 			*/
 			void hit(int power);
 
 			/*
-			* @brief Gets the name of the character.
-			* @return The name of the character.
+			 * @brief Gets the name of the character.
+			 * @return The name of the character.
 			*/
 			std::string getName() const;
 
 			/*
-			* @brief Gets the location of the character.
-			* @return The location of the character.
+			 * @brief Gets the location of the character.
+			 * @return The location of the character.
 			*/
 			const Point& getLocation() const;
 
 			/*
-			* @brief Sets the location of the character.
-			* @param location The new location of the character.
-			* @return void
+			 * @brief Sets the location of the character.
+			 * @param location The new location of the character.
+			 * @return void
 			*/
 			void setLocation(Point& location);
 
@@ -143,15 +143,15 @@ namespace ariel
 			void setInTeam(bool inTeam);
 
 			/*
-			* @brief Gets the health points of the character.
-			* @return The health points of the character.
+			 * @brief Gets the health points of the character.
+			 * @return The health points of the character.
 			*/
 			int getHP() const;
 
 			/*
-			* @brief Prints the character.
-			* @return void
-			* @note This is a pure virtual function because this class is abstract.
+			 * @brief Prints the character.
+			 * @return void
+			 * @note This is a pure virtual function because this class is abstract.
 			*/
 			virtual std::string print() const = 0;
 	};

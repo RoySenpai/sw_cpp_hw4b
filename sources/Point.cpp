@@ -32,7 +32,7 @@ Point Point::moveTowards(const Point &curr, const Point &other, double dist)
 {
 	if (dist < 0)
 		throw invalid_argument("Distance cannot be negative!");
-	
+
 	double d = curr.distance(other);
 
 	if (d <= dist)

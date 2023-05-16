@@ -71,10 +71,10 @@ void Cowboy::shoot(Character *other)
 
 	else
 
-	if (hasboolets())
+	if (_bullets > 0)
 	{
 		cout << getName() << " shoots " << other->getName() << " with 10 damage." << endl;
-		_bullets--;
+		_bullets -= 1;
 		other->hit(10);
 	}
 

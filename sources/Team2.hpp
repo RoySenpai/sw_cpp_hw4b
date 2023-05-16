@@ -22,7 +22,7 @@
 namespace ariel
 {
 	class Team2 : public Team
-	{
+	{		
 		public:
 			/*
 			* @brief Construct a new Team2 object.

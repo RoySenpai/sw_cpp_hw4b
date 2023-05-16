@@ -34,9 +34,11 @@ void Ninja::move(Character *other)
 	else if (!isAlive())
 		throw runtime_error("Cannot move while dead!");
 
-	_location = Point::moveTowards(_location, other->getLocation(), _speed);
+	Point newLocation = Point::moveTowards(getLocation(), other->getLocation(), _speed);
 
-	cout << getName() << " moved towards " << other->getName() << ". Current distance: " << _location.distance(other->getLocation()) << endl;
+	setLocation(newLocation);
+
+	cout << getName() << " moved towards " << other->getName() << ". Current distance: " << getLocation().distance(other->getLocation()) << endl;
 }
 
 void Ninja::slash(Character *other)
@@ -53,14 +55,14 @@ void Ninja::slash(Character *other)
 	else if (!other->isAlive())
 		throw runtime_error("Cannot slash a dead character!");
 
-	if (_location.distance(other->getLocation()) <= 1)
+	if (getLocation().distance(other->getLocation()) < 1)
 	{
 		cout << getName() << " slashed " << other->getName() << " with 40 damage." << endl;
 		other->hit(40);
 	}
 
 	else
-		cout << getName() << " tried to slash " << other->getName() << " but failed. Distance too far (" << _location.distance(other->getLocation()) << ")." << endl;
+		cout << getName() << " tried to slash " << other->getName() << " but failed. Distance too far (" << getLocation().distance(other->getLocation()) << ")." << endl;
 }
 
 string Ninja::print() const

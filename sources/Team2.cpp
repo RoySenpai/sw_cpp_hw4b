@@ -33,28 +33,43 @@ void Team2::attack(Team *other)
 
 	else if (other->stillAlive() == 0)
 		throw runtime_error("Other team is dead!");
+
+	else if (stillAlive() == 0)
+		throw runtime_error("This team is dead!");
 	
-
-	if (!other->getLeader()->isAlive())
+	if (!getLeader()->isAlive())
 	{
-		Character* tmp = Team::_find_victim(other);
+		Character *newLeader = nullptr;
 
-		if (tmp != nullptr)
-			other->setLeader(tmp);
+		double minDistance = numeric_limits<double>::max();
 
-		else
-			throw runtime_error("Great, you broke the game!");
+		for (Character* member: getMembers())
+		{
+			if (member->isAlive() && member->distance(getLeader()) < minDistance)
+			{
+				minDistance = member->distance(getLeader());
+				newLeader = member;
+			}
+		}
+
+		cout << "Team leader " << getLeader()->getName() << " has died, new leader is " << newLeader->getName() << endl;
+
+		setLeader(newLeader);
 	}
 
-	Character* victim = other->_find_victim(other);
+	cout << "Team " << getLeader()->getName() << " is attacking team " << other->getLeader()->getName() << endl;
 
-	if (victim == nullptr)
-		return;
+	Character* victim = _find_victim(other);
 
-	for (Character* member: _members)
+	for (Character* member: getMembers())
 	{
 		if (!victim->isAlive())
-			break;
+		{
+			if (other->stillAlive() == 0)
+				break;
+			
+			victim = _find_victim(other);
+		}
 
 		Cowboy* c = dynamic_cast<Cowboy*>(member);
 		Ninja* n = dynamic_cast<Ninja*>(member);
@@ -70,7 +85,7 @@ void Team2::attack(Team *other)
 
 		else if (n != nullptr && n->isAlive())
 		{
-			if (n->getLocation().distance(victim->getLocation()) <= 1)
+			if (n->getLocation().distance(victim->getLocation()) < 1)
 				n->slash(victim);
 
 			else
@@ -81,8 +96,8 @@ void Team2::attack(Team *other)
 
 void Team2::print() const
 {
-	cout << "Team Leader: " << _leader->getName() << endl;
+	cout << "Team Leader: " << getLeader()->getName() << endl;
 
-	for (Character *member : _members)
+	for (Character *member : getMembers())
 		cout << member->print() << endl;
 }
