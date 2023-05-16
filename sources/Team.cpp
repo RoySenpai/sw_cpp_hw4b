@@ -214,7 +214,7 @@ void Team::attack(Team *other)
 
 		if (n != nullptr && n->isAlive())
 		{
-			if (n->getLocation().distance(victim->getLocation()) < 1)
+			if (n->getLocation().distance(victim->getLocation()) <= 1)
 				n->slash(victim);
 
 			else

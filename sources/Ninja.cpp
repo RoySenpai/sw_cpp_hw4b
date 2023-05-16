@@ -55,7 +55,7 @@ void Ninja::slash(Character *other)
 	else if (!other->isAlive())
 		throw runtime_error("Cannot slash a dead character!");
 
-	if (getLocation().distance(other->getLocation()) < 1)
+	if (getLocation().distance(other->getLocation()) <= 1)
 	{
 		cout << getName() << " slashed " << other->getName() << " with 40 damage." << endl;
 		other->hit(40);
