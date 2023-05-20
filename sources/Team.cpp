@@ -104,7 +104,7 @@ Team::~Team()
 	_members.clear();
 }
 
-Character *Team::_find_victim(Team *other)
+Character *Team::_find_victim(Team *other) const
 {
 	Character *victim = nullptr;
 

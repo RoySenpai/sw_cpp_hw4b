@@ -38,6 +38,14 @@ namespace ariel
 			*/
 			std::vector<Character *> _members;
 
+		protected:
+			/*
+			* @brief Find a victim to attack.
+			* @param other A pointer to the other team.
+			* @return A pointer to the victim, or nullptr if there is no victim.
+			*/
+			virtual Character *_find_victim(Team *other) const;
+
 		public:
 			/*
 			* @brief Construct a new Team object.
@@ -76,13 +84,6 @@ namespace ariel
 			 * @return A reference to this team.
 			*/
 			Team& operator=(Team&& other) noexcept;
-
-			/*
-			* @brief Find a victim to attack.
-			* @param other A pointer to the other team.
-			* @return A pointer to the victim, or nullptr if there is no victim.
-			*/
-			Character *_find_victim(Team *other);
 
 			/*
 			 * @brief Add a member to the team.

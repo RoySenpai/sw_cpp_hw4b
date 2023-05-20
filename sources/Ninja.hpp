@@ -29,7 +29,7 @@ namespace ariel
 			*/
 			int _speed;
 
-		public:
+		protected:
 			/*
 			* @brief Construct a new Ninja object.
 			* @param name The name of the ninja.
@@ -39,6 +39,7 @@ namespace ariel
 			*/
 			Ninja(std::string name, const Point &location, int health_points, int speed);
 
+		public:
 			/*
 			* @brief Moves the ninja to another character _speed steps closer.
 			* @param other The other character.

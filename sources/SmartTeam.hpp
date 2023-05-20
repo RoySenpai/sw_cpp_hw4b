@@ -23,6 +23,22 @@ namespace ariel
 {
 	class SmartTeam : public Team
 	{
+		private:
+			/*
+			* @brief Find a victim to attack, by looking for the weakest character in the other team.
+			* @param other A pointer to the other team.
+			* @return A pointer to the victim, or nullptr if there is no victim.
+			*/
+			Character *_find_victim(Team *other) const override;
+
+			/*
+			 * @brief Find a victim to attack, by looking for the closest character in the other team.
+			 * @param other A pointer to the other team.
+			 * @param ref A pointer to the character to compare the distance to.
+			 * @return A pointer to the victim, or nullptr if there is no victim.
+			*/
+			Character *_find_victim(Team *other, Character *ref) const;
+
 		public:
 			/*
 			* @brief Construct a new SmartTeam object.
@@ -33,6 +49,9 @@ namespace ariel
 			/*
 			* @brief Attack the other team
 			* @param other A pointer to the other team
+			* @note The attack method is different for the smart team, 
+					as it looks for the weakest character in the other team to attack (Cowboys),
+					or the closest character to attack (Ninjas).
 			*/
 			void attack(Team *other) override;
 
