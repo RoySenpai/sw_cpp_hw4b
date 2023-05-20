@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+/*
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -97,9 +97,11 @@ auto random_char(double x = random_float(), double y = random_float()) -> Charac
 auto simulate_battle = [](Team &team, Team &team2) {
 	int i = 0;
 
+	int rounds = 1;
+
 	while (team.stillAlive() && team2.stillAlive())
 	{
-		cout << "Round " << i << ":" << endl;
+		cout << "Round " << rounds++ << ":" << endl;
 
 		cout << "Team 1:" << endl;
 		team.print();
@@ -123,15 +125,16 @@ auto simulate_battle = [](Team &team, Team &team2) {
 	}
 
 	cout << "Team " << (team.stillAlive() ? "1" : "2") << " won!" << endl;
-	cout << "Total rounds: " << i << endl;
+	cout << "Total rounds: " << rounds << endl;
 };
 
 auto simulate_battle_steps = [](Team &team, Team &team2) {
 	int i = 0;
+	int rounds = 1;
 
 	while (team.stillAlive() && team2.stillAlive())
 	{
-		cout << "Round " << i << ":" << endl;
+		cout << "Round " << rounds++ << ":" << endl;
 
 		cout << "Team 1:" << endl;
 		team.print();
@@ -149,21 +152,22 @@ auto simulate_battle_steps = [](Team &team, Team &team2) {
 		{
 			cout << "Team 2 attacks Team 1:" << endl;
 			team2.attack(&team);
+
+			cout << "Press Enter to continue." << endl;
+			cin.ignore(100000, '\n');
 		}
 
 		i++;
-
-		cout << "Press Enter to continue." << endl;
-		cin.ignore(100000, '\n');
 	}
 
 	cout << "Team " << (team.stillAlive() ? "1" : "2") << " won!" << endl;
-	cout << "Total rounds: " << i << endl;
+	cout << "Total rounds: " << rounds << endl;
 };
 //<-------------------------------------------------->
 
 int main(void) {
 	char battle_choice = '\0', team_choice = '\0';
+	int team1_size = 0, team2_size = 0;
 
 	cout << "Choose a battle mode:" << endl;
 	cout << "1. Normal" << endl;
@@ -189,17 +193,33 @@ int main(void) {
 		return 1;
 	}
 
+	cout << "Choose team sizes (1-10):" << endl;
+	cout << "Team 1: ";
+	cin >> team1_size;
+
+	cout << "Team 2: ";
+	cin >> team2_size;
+
+	if (team1_size < 1 || team2_size < 1 || team1_size > 10 || team2_size > 10)
+	{
+		cout << "Invalid team size." << endl;
+		return 1;
+	}
+
 	cout << "Creating characters..." << endl;
 
 	// Create characters
 	vector<Character *> team1_members;
 	vector<Character *> team2_members;
 
-	for (int i = 0; i < 10; i++)
-	{
+	team1_members.reserve((size_t)team1_size);
+	team2_members.reserve((size_t)team2_size);
+
+	for (int i = 0; i < team1_size; i++)
 		team1_members.push_back(random_char());
+
+	for (int i = 0; i < team2_size; i++)
 		team2_members.push_back(random_char());
-	}
 
 	cout << "Creating teams..." << endl;
 
@@ -493,4 +513,57 @@ int main(void) {
 	}
 
 	return 0;
+}*/
+
+/**
+ * Demo file for the exercise on binary tree
+ *
+ * @author Evgeny Hershkovitch Neiterman
+ * @since 2023-03
+ */
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+#include <cassert>
+using namespace std;
+
+#include "sources/Team.hpp" //no need for other includes
+
+using namespace ariel;
+
+
+int main() {
+    Point a(32.3,44),b(1.3,3.5);
+    assert(a.distance(b) == b.distance(a));
+    Cowboy *tom = new Cowboy("Tom", a);
+    OldNinja *sushi = new OldNinja("sushi", b);
+    tom->shoot(sushi);
+    cout << tom->print() <<endl;
+
+    sushi->move(tom);
+    sushi->slash(tom);
+
+    Team team_A(tom); 
+    team_A.add(new YoungNinja("Yogi", Point(64,57)));
+
+    // Team b(tom); should throw tom is already in team a
+
+     Team team_B(sushi);
+     team_B.add(new TrainedNinja("Hikari", Point(12,81)));
+
+
+     while(team_A.stillAlive() > 0 && team_B.stillAlive() > 0){
+        team_A.attack(&team_B);
+        team_B.attack(&team_A);
+        team_A.print();
+        team_B.print();
+     }
+
+     if (team_A.stillAlive() > 0) cout << "winner is team_A" << endl;
+     else cout << "winner is team_B" << endl;
+
+     return 0; // no memory issues. Team should free the memory of its members. both a and b teams are on the stack. 
+
 }
